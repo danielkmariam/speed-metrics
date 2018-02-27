@@ -1,0 +1,16 @@
+paths:
+    migrations: '%%PHINX_CONFIG_DIR%%/migrations'
+    seeds: '%%PHINX_CONFIG_DIR%%/seeds'
+
+environments:
+    default_database: development
+    development:
+        adapter: mysql
+        host: localhost
+        name: speed_metrics
+        user: root
+        pass: root
+        port: 3306
+        charset: utf8
+
+version_order: creation
