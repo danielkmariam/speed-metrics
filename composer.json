@@ -7,7 +7,13 @@
             "email": "danielkmariam@gmail.com"
         }
     ],
+    "config": {
+        "bin-dir": "bin"
+    },
     "require": {
         "php": "~7.0"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "^4.3"
     }
 }
