@@ -1,0 +1,13 @@
+{
+    "name": "danielkmariam/speed-metrics",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Daniel Kidanemariam",
+            "email": "danielkmariam@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "~7.0"
+    }
+}
