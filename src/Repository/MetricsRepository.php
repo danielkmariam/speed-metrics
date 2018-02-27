@@ -6,6 +6,11 @@ use Doctrine\DBAL\Query\QueryBuilder;
 
 class MetricsRepository
 {
+    const DOWNLOAD_TABLE = 'download';
+    const UPLOAD_TABLE = 'upload';
+    const LATENCY_TABLE = 'latency';
+    const PACKET_LOSS_TABLE = 'packet_loss';
+
     /**
      * @var QueryBuilder
      */

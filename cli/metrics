@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$pimple = new Pimple\Container();
+$pimple->register(new \ServiceProvider\ApplicationProvider());
+$pimple->register(new \ServiceProvider\ConsoleProvider());
+
+$container = new \Pimple\Psr11\Container($pimple);
+
+$application = $container->get(Application::class);
+
+$application->run();
+//$application->run(
+//    $container->get(InputInterface::class),
+//    $container->get(OutputInterface::class)
+//);
