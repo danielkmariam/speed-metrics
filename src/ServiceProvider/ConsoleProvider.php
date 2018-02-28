@@ -76,7 +76,7 @@ class ConsoleProvider implements ServiceProviderInterface
             return new QueryBuilder(
                 DriverManager::getConnection([
                     'user' => 'root',
-                    'password' => 'root',
+                    'password' => '',
                     'host' => 'localhost',
                     'dbname' => 'speed_metrics',
                     'driver' => 'pdo_mysql',
