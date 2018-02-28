@@ -39,4 +39,76 @@ class MetricsRepository
             // ignore for now
         }
     }
+
+    /**
+     * @param string $unitId
+     * @param string $timestamp
+     *
+     * @return array
+     */
+    public function fetchDownloadMetrics(string $unitId, string $timestamp)
+    {
+        return $this->fetchMetrics(self::DOWNLOAD_TABLE, $unitId, $timestamp);
+    }
+
+    /**
+     * @param string $unitId
+     * @param string $timestamp
+     *
+     * @return array
+     */
+    public function fetchUploadMetrics(string $unitId, string $timestamp)
+    {
+        return $this->fetchMetrics(self::UPLOAD_TABLE, $unitId, $timestamp);
+    }
+
+    /**
+     * @param string $unitId
+     * @param string $timestamp
+     *
+     * @return array
+     */
+    public function fetchLatencyMetrics(string $unitId, string $timestamp)
+    {
+        return $this->fetchMetrics(self::LATENCY_TABLE, $unitId, $timestamp);
+    }
+
+    /**
+     * @param string $unitId
+     * @param string $timestamp
+     *
+     * @return array
+     */
+    public function fetchPacketLOssMetrics(string $unitId, string $timestamp)
+    {
+        return $this->fetchMetrics(self::PACKET_LOSS_TABLE, $unitId, $timestamp);
+    }
+
+    /**
+     * @param string $tableName
+     * @param string $unitId
+     * @param string $timestamp
+     *
+     * @return array
+     */
+    private function fetchMetrics(string $tableName, string $unitId, string $timestamp)
+    {
+        try {
+            $query = $this->queryBuilder
+                ->select('*')
+                ->from($tableName)
+                ->where('unit_id = :unitId')
+                ->setParameter('unitId', $unitId);
+
+            if (!empty($timestamp)) {
+                $query->andWhere('timestamp = :timestamp')
+                    ->setParameter('timestamp', $timestamp);
+            }
+
+            return $query->execute()->fetchAll();
+
+        } catch(\Exception $e) {
+            // ignore for now
+        }
+    }
 }
