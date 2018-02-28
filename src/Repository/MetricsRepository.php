@@ -41,74 +41,134 @@ class MetricsRepository
     }
 
     /**
+     * @param string $tableName
      * @param string $unitId
-     * @param string $timestamp
+     * @param string $hour
      *
-     * @return array
+     * @return mixed
      */
-    public function fetchDownloadMetrics(string $unitId, string $timestamp)
+    public function fetchHourlyMaxMetrics(string $tableName, string $unitId, string $hour)
     {
-        return $this->fetchMetrics(self::DOWNLOAD_TABLE, $unitId, $timestamp);
-    }
+        $query = $this->queryBuilder
+            ->select('max(value) as value')
+            ->from($tableName)
+            ->where('unit_id = :unitId')
+            ->andWhere('HOUR(timestamp)+1 = :time')
+            ->setParameter('unitId', $unitId)
+            ->setParameter('time', $hour);
 
-    /**
-     * @param string $unitId
-     * @param string $timestamp
-     *
-     * @return array
-     */
-    public function fetchUploadMetrics(string $unitId, string $timestamp)
-    {
-        return $this->fetchMetrics(self::UPLOAD_TABLE, $unitId, $timestamp);
-    }
-
-    /**
-     * @param string $unitId
-     * @param string $timestamp
-     *
-     * @return array
-     */
-    public function fetchLatencyMetrics(string $unitId, string $timestamp)
-    {
-        return $this->fetchMetrics(self::LATENCY_TABLE, $unitId, $timestamp);
-    }
-
-    /**
-     * @param string $unitId
-     * @param string $timestamp
-     *
-     * @return array
-     */
-    public function fetchPacketLOssMetrics(string $unitId, string $timestamp)
-    {
-        return $this->fetchMetrics(self::PACKET_LOSS_TABLE, $unitId, $timestamp);
+        return $query->execute()->fetch()['value'];
     }
 
     /**
      * @param string $tableName
      * @param string $unitId
+     * @param string $hour
+     *
+     * @return mixed
+     */
+    public function fetchHourlyMinMetrics(string $tableName, string $unitId, string $hour)
+    {
+        $query = $this->queryBuilder
+            ->select('min(value) as value')
+            ->from($tableName)
+            ->where('unit_id = :unitId')
+            ->andWhere('HOUR(timestamp)+1 = :time')
+            ->setParameter('unitId', $unitId)
+            ->setParameter('time', $hour);
+
+        return $query->execute()->fetch()['value'];
+    }
+
+    /**
+     * @param string $tableName
+     * @param string $unitId
+     * @param string $hour
+     *
+     * @return mixed
+     */
+    public function fetchHourlyMeanMetrics(string $tableName, string $unitId, string $hour)
+    {
+        $query = $this->queryBuilder
+            ->select('avg(value) as value')
+            ->from($tableName)
+            ->where('unit_id = :unitId')
+            ->andWhere('HOUR(timestamp)+1 = :time')
+            ->setParameter('unitId', $unitId)
+            ->setParameter('time', $hour);
+
+        return $query->execute()->fetch()['value'];
+    }
+
+    /**
+     * @param string $tableName
+     * @param string $unitId
+     * @param string $hour
+     *
+     * @return mixed
+     */
+    public function fetchHourlyMedianMetrics(string $tableName, string $unitId, string $hour)
+    {
+        $query = $this->queryBuilder
+            ->select('avg(value) as value')
+            ->from($tableName)
+            ->where('unit_id = :unitId')
+            ->andWhere('HOUR(timestamp)+1 = :time')
+            ->addOrderBy('value')
+            ->setParameter('unitId', $unitId)
+            ->setParameter('time', $hour);
+
+        return $query->execute()->fetch()['value'];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function fetchSampleSize()
+    {
+        $query = $this->queryBuilder
+            ->select('count(DISTINCT unit_id) as value')
+            ->from('download');
+
+        return $query->execute()->fetch()['value'];
+    }
+
+    /**
+     * @param string $metrics
+     * @param string $unitId
      * @param string $timestamp
      *
      * @return array
      */
-    private function fetchMetrics(string $tableName, string $unitId, string $timestamp)
+    public function fetchMetrics(string $metrics, string $unitId, string $timestamp)
     {
-        try {
-            $query = $this->queryBuilder
-                ->select('*')
-                ->from($tableName)
-                ->where('unit_id = :unitId')
-                ->setParameter('unitId', $unitId);
-
-            if (!empty($timestamp)) {
-                $query->andWhere('timestamp = :timestamp')
-                    ->setParameter('timestamp', $timestamp);
-            }
-
-            return $query->execute()->fetchAll();
-
-        } catch(\Exception $e) {
-            // ignore for now
+        if (!$this->isValidMetrics($metrics)) {
+            return [];
         }
+
+        $query = $this->queryBuilder
+            ->select('*')
+            ->from($metrics)
+            ->where('unit_id = :unitId')
+            ->andWhere('timestamp = :timestamp')
+            ->setParameter('unitId', $unitId)
+            ->setParameter('timestamp', $timestamp);
+
+        return $query->execute()->fetchAll();
+    }
+
+    /**
+     * @param $metrics
+     *
+     * @return bool
+     */
+    private function isValidMetrics($metrics)
+    {
+        return in_array($metrics, [
+            self::DOWNLOAD_TABLE,
+            self::UPLOAD_TABLE,
+            self::LATENCY_TABLE,
+            self::PACKET_LOSS_TABLE
+        ]);
     }
 }

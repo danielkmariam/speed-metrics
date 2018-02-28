@@ -1,11 +1,8 @@
 <?php
 namespace Command;
 
-use ApiClient\DataPointService;
-use Repository\MetricsRepository;
 use Response\AggregateJson;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -33,8 +30,8 @@ class AggregateData extends Command
      */
     protected function configure()
     {
-        $this->setName("aggregate:data")
-            ->setDescription("Aggregate data and store to database.");
+        $this->setName("fetch:aggregate:store")
+            ->setDescription("Fetch data from remote, aggregate data and store to database.");
     }
 
     /**

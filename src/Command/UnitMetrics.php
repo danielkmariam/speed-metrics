@@ -9,6 +9,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class UnitMetrics
+ */
 class UnitMetrics extends Command
 {
     /**
@@ -31,11 +34,11 @@ class UnitMetrics extends Command
     protected function configure()
     {
         $this->setName("unit:metrics")
-            ->setDescription("Unit metrics")
+            ->setDescription("Read unit metrics for a give day and time")
             ->addArgument('unit_id', InputArgument::REQUIRED, 'Id of the unit to check')
-            ->addArgument('metrics', InputArgument::OPTIONAL, 'Type of metrics to check. The options are download, upload ')
-            ->addArgument('date', InputArgument::OPTIONAL, 'Date to check the metrics in `2017-02-01` format')
-            ->addArgument('time', InputArgument::OPTIONAL, 'Hour to check the metrics in `am` and `pm` format');
+            ->addArgument('metrics', InputArgument::REQUIRED, 'Type of metrics to check. The options are download, upload ')
+            ->addArgument('date', InputArgument::REQUIRED, 'Date to check the metrics in `2017-02-01` format')
+            ->addArgument('time', InputArgument::REQUIRED, 'Hour to check the metrics in `am` and `pm` format');
     }
 
     /**
@@ -45,26 +48,25 @@ class UnitMetrics extends Command
     {
         $unitId = $input->getArgument('unit_id');
         $metrics = $input->getArgument('metrics');
+        $metricsResult = $this->repository->fetchMetrics($metrics, $unitId, $this->getTimeStamp($input));
 
-        $metricsResult = [];
-        if ($metrics == MetricsRepository::DOWNLOAD_TABLE) {
-            $metricsResult = $this->repository->fetchDownloadMetrics($unitId, $this->getTimeStamp($input));
-        }
-
-        if ($metrics == MetricsRepository::UPLOAD_TABLE) {
-            $metricsResult = $this->repository->fetchUploadMetrics($unitId, $this->getTimeStamp($input));
-        }
-
-        if ($metrics == MetricsRepository::LATENCY_TABLE) {
-            $metricsResult = $this->repository->fetchLatencyMetrics($unitId, $this->getTimeStamp($input));
-        }
-
-        if ($metrics == MetricsRepository::PACKET_LOSS_TABLE) {
-            $metricsResult = $this->repository->fetchPacketLossMetrics($unitId, $this->getTimeStamp($input));
-        }
-
-        foreach ($metricsResult as $metric) {
-            $output->write(sprintf('%s,%s', $metric['unit_id'], $metric['value']).PHP_EOL);
+        if (count($metricsResult) == 0) {
+            $output->writeln(sprintf(
+                "Unit #%s's %s on %s at %s > No reading found",
+                $unitId,
+                $metrics,
+                $input->getArgument('date'),
+                $input->getArgument('time')
+            ));
+        } else {
+            $output->writeln(sprintf(
+                "Unit #%s's %s on %s at %s > %s",
+                $unitId,
+                $metrics,
+                $input->getArgument('date'),
+                $input->getArgument('time'),
+                $metricsResult[0]['value']
+            ));
         }
     }
 
@@ -75,14 +77,12 @@ class UnitMetrics extends Command
      */
     protected function getTimeStamp(InputInterface $input)
     {
-        $date = $input->getArgument('date');
-        $time = $input->getArgument('time');
+        $timestamp = new DateTime(sprintf(
+            '%s %s',
+            $input->getArgument('date'),
+            DATE("H:i", STRTOTIME($input->getArgument('time')))
+        ));
 
-        $timestamp = null;
-        if (isset($time) && isset($time)) {
-            $timestamp = new DateTime(sprintf('%s %s', $date, DATE("H:i", STRTOTIME($time))));
-        }
-
-        return !is_null($timestamp) ? $timestamp->format('Y-m-d H:s:i'): '';
+        return $timestamp->format('Y-m-d H:s:i');
     }
 }
