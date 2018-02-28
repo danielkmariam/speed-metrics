@@ -1,18 +1,20 @@
 # speed-metrics
 
+Command line tool to check some metrics
+
 ## Dependencies
 * PHP7.1
 * MYSQL
 
-## Prerequsit
+## Prerequsite
 
-Create mysql database with the following credentials
+### Create mysql database with the following credentials
 ```$xslt
     'user' => 'root',
-    'password' => 'root',
     'host' => 'localhost',
     'dbname' => 'speed_metrics',
 ```
+NOTE: password is not required
 
 ### Clone repository
 
@@ -51,8 +53,10 @@ bin/phinx migrate
 ### Fetch, aggregate and store data
 
 ```bash
-./cli/metrics aggregate:data
+./cli/metrics fetch:aggregate:store
 ```
+Note: above command has to run before checking metrics. This populate the database with data.
+
 ### Check hourly reading of a specific unit & metric
 ```bash
 ./cli/metrics unit:metrics <unit_id>, <metrics>, <date>, <time>
@@ -105,4 +109,12 @@ example
 ```bash
 ./cli/metrics sample:size
 ```
+
+## Future Changes
+
+* Use stream to aggregate data, currently json_decode is used to convert the api response and this might cause big memory issue if the response is very large.
+* Use better php algorithm or other performing languages to process the response data and store to the database, current implementations is performance can be improved by introducing concurrency.
+* Improve the algorithm to calculate Median, Mean, Min and Max, current implementation is heavily dependent on the mysql methods. Especially the Median algorithm can be improved by using Selection algorithm.
+* Improve database schema, perhaps use views to store metrics instead of calculating on the fly.
+* Better test coverage
 
