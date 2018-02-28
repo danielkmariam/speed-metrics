@@ -19,6 +19,13 @@ final class MetricsCalculator
         $this->repository = $repository;
     }
 
+    /**
+     * @param string $tableName
+     * @param string $unitId
+     * @param string $timestamp
+     *
+     * @return float|int
+     */
     public function calculateMedian(string $tableName, string $unitId, string $timestamp)
     {
         $data = $this->repository->fetchHourlyMedianMetrics($tableName, $unitId, $timestamp);

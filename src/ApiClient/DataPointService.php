@@ -34,9 +34,11 @@ class DataPointService
      */
     public function get()
     {
-        return $this->client
+        $response = $this->client
             ->request(self::GET, $this->endpoint)
             ->getBody()
             ->getContents();
+
+        return \GuzzleHttp\json_decode($response);
     }
 }

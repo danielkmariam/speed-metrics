@@ -33,13 +33,12 @@ class AggregateJson
     public function aggregate()
     {
         $dataSet = $this->dataPointService->get();
-        $decoded = \GuzzleHttp\json_decode($dataSet);
 
-        foreach ($decoded as $decode) {
-            $this->saveDownloadData($decode);
-            $this->saveUploadData($decode);
-            $this->saveLatencyData($decode);
-            $this->savePacketLossData($decode);
+        foreach ($dataSet as $data) {
+            $this->saveDownloadData($data);
+            $this->saveUploadData($data);
+            $this->saveLatencyData($data);
+            $this->savePacketLossData($data);
         }
     }
 

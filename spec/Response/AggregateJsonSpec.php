@@ -14,11 +14,9 @@ class AggregateJsonSpec extends ObjectBehavior
     }
 
     /**
-     * @param DataPointService  $dataPointService
-     * @param MetricsRepository $repository
+     * @param DataPointService $dataPointService
      */
-    function is_saves_aggregate_data_to_database(DataPointService $dataPointService, MetricsRepository $repository)
-    {
+    function is_saves_aggregate_data_to_database(DataPointService $dataPointService) {
         $jsonData = '[{
             "unit_id": 1,
             "metrics": {
@@ -54,12 +52,8 @@ class AggregateJsonSpec extends ObjectBehavior
         }]';
 
         $response = \GuzzleHttp\json_decode($jsonData);
-
         $dataPointService->get()->willReturn($response);
 
-//        $repository->persistData()->willBeCalled();
-
-        $this->aggregate()->shouldBeCalled();
+        $this->aggregate();
     }
-
 }
