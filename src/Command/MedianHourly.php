@@ -2,7 +2,7 @@
 
 namespace Command;
 
-use Repository\MetricsRepository;
+use Calculator\MetricsCalculator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,17 +14,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 class MedianHourly extends Command
 {
     /**
-     * @var MetricsRepository
+     * @var MetricsCalculator
      */
-    private $repository;
+    private $calculator;
 
     /**
-     * @param MetricsRepository $repository
+     * @param MetricsCalculator $calculator
+     *
+     * @internal param MetricsRepository $repository
      */
-    public function __construct(MetricsRepository $repository)
+    public function __construct(MetricsCalculator $calculator)
     {
         parent::__construct();
-        $this->repository = $repository;
+        $this->calculator = $calculator;
     }
 
     /**
@@ -52,7 +54,7 @@ class MedianHourly extends Command
             $unitId,
             $metrics,
             $input->getArgument('time'),
-            $this->repository->fetchHourlyMedianMetrics($metrics, $unitId, $this->changeAmPmTo24Hr($input))
+            $this->calculator->calculateMedian($metrics, $unitId, $this->changeAmPmTo24Hr($input))
         ));
     }
 
@@ -63,6 +65,6 @@ class MedianHourly extends Command
      */
     protected function changeAmPmTo24Hr(InputInterface $input)
     {
-        return DATE("G", STRTOTIME($input->getArgument('time'))) + 1;
+        return DATE("G", STRTOTIME($input->getArgument('time')));
     }
 }

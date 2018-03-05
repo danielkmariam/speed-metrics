@@ -18,7 +18,7 @@ class MetricsCalculatorSpec extends ObjectBehavior
     {
         $data = [];
 
-        $repository->fetchHourlyMedianMetrics('download', 1, '1am')->willReturn($data);
+        $repository->fetchHourlyMetrics('download', 1, '1am')->willReturn($data);
 
         $this->calculateMedian('download', 1, '1am')->shouldReturn(0);
     }
@@ -27,7 +27,7 @@ class MetricsCalculatorSpec extends ObjectBehavior
     {
         $data = [1, 2, 3];
 
-        $repository->fetchHourlyMedianMetrics('download', 1, '1am')->willReturn($data);
+        $repository->fetchHourlyMetrics('download', 1, '1am')->willReturn($data);
 
         $this->calculateMedian('download', 1, '1am')->shouldReturn(2);
     }
@@ -36,7 +36,7 @@ class MetricsCalculatorSpec extends ObjectBehavior
     {
         $data = [1, 2, 3, 4];
 
-        $repository->fetchHourlyMedianMetrics('download', 1, '1am')->willReturn($data);
+        $repository->fetchHourlyMetrics('download', 1, '1am')->willReturn($data);
 
         $this->calculateMedian('download', 1, '1am')->shouldReturn(2.5);
     }

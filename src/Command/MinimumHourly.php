@@ -63,6 +63,6 @@ class MinimumHourly extends Command
      */
     protected function changeAmPmTo24Hr(InputInterface $input)
     {
-        return DATE("G", STRTOTIME($input->getArgument('time'))) + 1;
+        return DATE("G", STRTOTIME($input->getArgument('time')));
     }
 }

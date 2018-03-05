@@ -4,7 +4,7 @@ namespace Calculator;
 
 use Repository\MetricsRepository;
 
-final class MetricsCalculator
+class MetricsCalculator
 {
     /**
      * @var MetricsRepository
@@ -28,7 +28,7 @@ final class MetricsCalculator
      */
     public function calculateMedian(string $tableName, string $unitId, string $timestamp)
     {
-        $data = $this->repository->fetchHourlyMedianMetrics($tableName, $unitId, $timestamp);
+        $data = $this->repository->fetchHourlyMetrics($tableName, $unitId, $timestamp);
         if (empty($data)) {
             return 0;
         }

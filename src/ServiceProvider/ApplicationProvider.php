@@ -4,6 +4,7 @@ namespace ServiceProvider;
 use ApiClient\ClientInterface;
 use ApiClient\DataPointService;
 use ApiClient\GuzzleClient;
+use Calculator\MetricsCalculator;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver;
@@ -41,6 +42,10 @@ class ApplicationProvider implements ServiceProviderInterface
 
         $container[Configuration::class] = function (): Configuration {
             return new Configuration();
+        };
+
+        $container[MetricsCalculator::class] = function ($container): MetricsCalculator {
+            return new MetricsCalculator($container[MetricsRepository::class]);
         };
 
         $container[DataPointService::class] = function ($container): DataPointService {

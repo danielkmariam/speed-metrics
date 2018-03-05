@@ -2,18 +2,15 @@
 
 namespace spec\Command;
 
-use Command\MaximumHourly;
-use Command\MeanHourly;
+use Calculator\MetricsCalculator;
 use Command\MedianHourly;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
-use Repository\MetricsRepository;
 
 class MedianHourlySpec extends ObjectBehavior
 {
-    function let(MetricsRepository $repository)
+    function let(MetricsCalculator $calculator)
     {
-        $this->beConstructedWith($repository);
+        $this->beConstructedWith($calculator);
     }
 
     function it_is_initializable()
