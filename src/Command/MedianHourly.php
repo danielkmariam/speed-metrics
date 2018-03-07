@@ -65,6 +65,6 @@ class MedianHourly extends Command
      */
     protected function changeAmPmTo24Hr(InputInterface $input)
     {
-        return DATE("G", STRTOTIME($input->getArgument('time')));
+        return date("G", strtotime($input->getArgument('time')));
     }
 }

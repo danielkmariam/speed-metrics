@@ -80,7 +80,7 @@ class UnitMetrics extends Command
         $timestamp = new DateTime(sprintf(
             '%s %s',
             $input->getArgument('date'),
-            DATE("H:i", STRTOTIME($input->getArgument('time')))
+            date("H:i", strtotime($input->getArgument('time')))
         ));
 
         return $timestamp->format('Y-m-d H:s:i');
