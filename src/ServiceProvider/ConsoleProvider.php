@@ -2,6 +2,7 @@
 namespace ServiceProvider;
 
 use ApiClient\DataPointService;
+use Calculator\MetricsCalculator;
 use Command\AggregateData;
 use Command\MaximumHourly;
 use Command\MeanHourly;
@@ -48,7 +49,7 @@ class ConsoleProvider implements ServiceProviderInterface
         };
 
         $container[MedianHourly::class] = function ($container): MedianHourly {
-            return new MedianHourly($container[MetricsRepository::class]);
+            return new MedianHourly($container[MetricsCalculator::class]);
         };
 
         $container[MeanHourly::class] = function ($container): MeanHourly {

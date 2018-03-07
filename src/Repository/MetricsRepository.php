@@ -53,7 +53,7 @@ class MetricsRepository
             ->select('max(value) as value')
             ->from($tableName)
             ->where('unit_id = :unitId')
-            ->andWhere('HOUR(timestamp)+1 = :time')
+            ->andWhere('HOUR(timestamp) = :time')
             ->setParameter('unitId', $unitId)
             ->setParameter('time', $hour);
 
@@ -73,7 +73,7 @@ class MetricsRepository
             ->select('min(value) as value')
             ->from($tableName)
             ->where('unit_id = :unitId')
-            ->andWhere('HOUR(timestamp)+1 = :time')
+            ->andWhere('HOUR(timestamp) = :time')
             ->setParameter('unitId', $unitId)
             ->setParameter('time', $hour);
 
@@ -93,7 +93,7 @@ class MetricsRepository
             ->select('avg(value) as value')
             ->from($tableName)
             ->where('unit_id = :unitId')
-            ->andWhere('HOUR(timestamp)+1 = :time')
+            ->andWhere('HOUR(timestamp) = :time')
             ->setParameter('unitId', $unitId)
             ->setParameter('time', $hour);
 
@@ -107,18 +107,20 @@ class MetricsRepository
      *
      * @return mixed
      */
-    public function fetchHourlyMedianMetrics(string $tableName, string $unitId, string $hour)
+    public function fetchHourlyMetrics(string $tableName, string $unitId, string $hour)
     {
         $query = $this->queryBuilder
-            ->select('avg(value) as value')
+            ->select('value')
             ->from($tableName)
             ->where('unit_id = :unitId')
-            ->andWhere('HOUR(timestamp)+1 = :time')
+            ->andWhere('HOUR(timestamp) = :time')
             ->addOrderBy('value')
             ->setParameter('unitId', $unitId)
             ->setParameter('time', $hour);
 
-        return $query->execute()->fetch()['value'];
+        return array_map(function($row) {
+            return $row['value'];
+        }, $query->execute()->fetchAll());
     }
 
     /**
